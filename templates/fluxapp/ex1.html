@@ -1,0 +1,64 @@
+{% extends 'fluxapp/layout.html' %}
+
+{% block contient %}
+    <h3>3 files d'attentes M/M/1</h3>
+    <h4>dans le réseau jackson ouvret</h4>
+    <div class="d-flex justify-content-center">
+        <img src="https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-805011992453/resources/static/ex1.jpg" alt="ex1" height="70%" width="70%">
+    </div>
+    <div class="container">
+        <h4>Initialisation</h4>
+        {{ form.non_field_errors }}
+        {% if err == 1 %}
+            <div class="alert alert-danger" role="alert">$${\rho_i \text{ doit être entre 0 et 1 pour assure que la probabilité } \pi \text{ existe. Modifier les paramètres } \mu \text{, et }\lambda}$$</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-check-inline">
+                {{ form.lbd.error }}
+                <label for="{{ form.lbd.id_for_label }}" style="margin-right: 5px">λ = </label>
+                {{ form.lbd }}
+            </div>
+            <div class="form-check-inline">
+                {{ form.p01.errors }}
+                <label for="{{ form.p01.id_for_label }}" style="margin-right: 5px">p01 = </label>
+                {{ form.p01 }}
+            </div>
+            <div class="form-check-inline">
+                <label style="margin-right: 5px">p02 = 1 - p01 </label>
+            </div>
+            <div class="form-check-inline">
+                {{ form.mu1.errors }}
+                <label for="{{ form.mu1.id_for_label }}" style="margin-right: 5px">µ1 = </label>
+                {{ form.mu1 }}
+            </div>
+            <div class="form-check-inline">
+                {{ form.mu2.errors }}
+                <label for="{{ form.mu2.id_for_label }}" style="margin-right: 5px">µ2 = </label>
+                {{ form.mu2 }}
+            </div>
+            <div class="form-check-inline">
+                {{ form.mu3.errors }}
+                <label for="{{ form.mu3.id_for_label }}" style="margin-right: 5px">µ3 = </label>
+                {{ form.mu3 }}
+            </div>
+            <div class="form-check-inline">
+                <button type="submit" class="btn btn-primary">Confirmer</button>
+            </div>
+        </form>
+        <h4 style="margin-top: 10px">Résultat</h4>
+        <div class="container">
+            <p>Tout les files sont M/M/1. Lorsque les taux de service ne dépendent pas de l'état de la file d'attente, la loi de stationnaire est</p>
+            <h5>$${ \pi(n_1, n_2, n_3) = \prod_{i=1}^3 (1-\rho_i)\rho^{n_i}_i }$$</h5>
+            <h5>$${\text{où}\qquad \rho_i = \frac{\lambda_i}{\mu_i} = \frac{\lambda e_i}{\mu_i} }$$</h5>
+            <p>e est un vecteur ligne, et il est calculé par la matrice P est le vecteur p</p><br />
+            <h5>$${ e = p + eP }$$</h5>
+            <h5>$${ \text{où}\qquad p = \begin{pmatrix}p01 & p02 & p03\end{pmatrix} = \begin{pmatrix}p01 & p02 & 0\end{pmatrix} }$$</h5>
+            <h5>$${ \text{et}\qquad P = \begin{pmatrix}p11 & p12 & p13 \\\ p21 & p22 & p23 \\\ p31 & p32 & p33\end{pmatrix} = \begin{pmatrix}0 & 0 & 1 \\\ 0 & 0 & 1 \\\ 0 & 0 & 0\end{pmatrix} }$$</h5>
+            <p>Donc,</p><br />
+            <h5>$${ \rho = \begin{pmatrix}{{ rho1 }} & {{ rho2 }} & {{ rho3 }}\end{pmatrix} }$$</h5>
+            <h5>$${ \pi(1,1,1) = {{ pai }} }$$</h5>
+            <h5>{{ e }}</h5>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'fluxapp/layout.html' %}
+
+{% block contient %}
+    <h1>Accueil</h1>
+    <div class="card-deck">
+        <div class="card border-info mb-3" style="max-width: 18rem; margin-right: 20px">
+            <div class="card-header">Modèle</div>
+            <a href="http://django-app-dev2.us-west-2.elasticbeanstalk.com/ex1">
+                <div class="card-body">
+                    <h5 class="card-title">3 files d'attents</h5>
+                    <p class="card-text">C'est une application simple du réseau jackson ouvert. Dedans, il y a 3 files d'attentes.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="card border-info mb-3" style="max-width: 18rem; margin-right: 20px">
+            <div class="card-header">Modèle</div>
+            <a href="https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-805011992453/resources/static/rapport_flux_patients.html">
+                <div class="card-body">
+                    <h5 class="card-title">Flux des patients</h5>
+                    <p class="card-text">C'est une application du réseau jackson ouvert pour etudier le flux des patients dans un hôpital.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="card border-secondary mb-3" style="max-width: 18rem; margin-right: 20px">
+            <a href="http://django-app-dev2.us-west-2.elasticbeanstalk.com/fluxapp/createFiles1">
+                <div class="card-body">
+                    <h5 style="color: grey; margin-bottom: 30px">créer nouveau modèle</h5>
+                    <img style="max-height: 8rem; max-width: 8rem;display: block;margin-left: auto;margin-right: auto;width: 50%;" src="https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-805011992453/resources/static/plus-hi.png">
+                </div>
+            </a>
+        </div>
+    </div>
+{% endblock %}

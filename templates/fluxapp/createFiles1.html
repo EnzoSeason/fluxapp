@@ -1,0 +1,26 @@
+{% extends 'fluxapp/layout.html' %}
+
+{% block contient %}
+    <h3>Les flux des patients dans l'hôpital</h3>
+    <div class="container">
+        <h4>Initialisation</h4>
+        {{ form.non_field_errors }}
+        <form method="post">
+            {% csrf_token %}
+             <div class="form-check">
+                {{ form.lbd.error }}
+                <label for="{{ form.lbd.id_for_label }}" style="margin-right: 5px">le nombre des patients arrivées par heure λ = </label>
+                {{ form.lbd }}
+            </div>
+             <div class="form-check">
+                {{ form.nbFiles.error }}
+                <label for="{{ form.nbFiles.id_for_label }}" style="margin-right: 5px">le nombre des files = </label>
+                {{ form.nbFiles }}
+            </div>
+            <div class="form-check-inline">
+                <button type="submit" class="btn btn-primary">Suivant</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

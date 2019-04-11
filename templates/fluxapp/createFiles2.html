@@ -1,0 +1,133 @@
+{% extends 'fluxapp/layout.html' %}
+
+{% block scripte_library %}
+    <!-- JQuery UI-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+{% endblock %}
+
+{% block contient %}
+    <h3>Les flux des patients dans l'hôpital</h3>
+    <div id="platform" style="height: 500px; border: darkgrey solid; margin-outside: 10px">
+    {% for i in nbFiles %}
+        <div class="draggable_file" id="file{{ forloop.counter }}" style="width: 150px; height: 50px; padding: 0.5em; border: black solid">
+            <p class="center">File {{ forloop.counter }}</p>
+        </div>
+    {% endfor %}
+    </div>
+    <div id="stat" class="container">
+        <form id='files_form'>
+            {% csrf_token %}
+            <div class="form-group row">
+                <label for="nbFiles" class="col-sm-4 col-form-label">Le nombre des files, nbFiles = </label>
+                <div class="col-sm-8">
+                    <input type="text" readonly class="form-control-plaintext" id="nbFiles" value="{{ nbFiles.stop }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="lbd" class="col-sm-4 col-form-label">Le nombre des patients arrivées, λ = </label>
+                <div class="col-sm-8">
+                    <input type="text" readonly class="form-control-plaintext" id="lbd" value="{{ lbd }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <h6>Les probabilités d'aller à File i ou sortir p0i, et le sum de p0i est 1. Elles sont écrit comme p0sortir_p01_p02_ ... _p0i_ ... _p0n. </h6>
+                <label for="p_0_i" class="col-sm-2 col-form-label" >p0i = </label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="p_0_i" placeholder="" required>
+                </div>
+            </div>
+            <h4>Initialisation de chaque file</h4>
+            {% for i in nbFiles %}
+                <h4>File {{ forloop.counter }}</h4>
+                <div class="form-group row">
+                    <label for="mu_{{ forloop.counter }}" class="col-sm-2 col-form-label" >µ{{ forloop.counter }} = </label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="mu_{{ forloop.counter }}" placeholder="mu{{ forloop.counter }}" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <h6>Les probabilités d'aller à File i ou sortir p{{ forloop.counter }}i, et le sum de p{{ forloop.counter }}i est 1. Elle sont écrit comme p{{ forloop.counter }}sortir_p{{ forloop.counter }}1_p{{ forloop.counter }}2_ ... _p{{ forloop.counter }}i_ ... _p{{ forloop.counter }}n. </h6>
+                    <label for="p_{{ forloop.counter }}_i" class="col-sm-2 col-form-label" >p{{ forloop.counter }}i = </label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="p_{{ forloop.counter }}_i" placeholder="" required>
+                    </div>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary mb-2">Confirmer</button>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+      $(".draggable_file").draggable({
+          containment: "parent",
+      })
+
+      // ajax post
+      $(document).on('submit','#files_form', function (e) {
+          e.preventDefault();
+          var nbFiles = parseInt($('#nbFiles').val());
+
+          var err = 0;
+          var errMessage = '';
+          var mu = [];
+          for (var i=1; i <= nbFiles; i++){
+              mu[i] = parseFloat($('#mu_'+i).val());
+          }
+
+          var P = [];
+          for (var i=0; i<= nbFiles; i++){
+              var p = $('#p_'+i+'_i').val().split('_');
+              if (p.length != nbFiles + 1){
+                  err = 1;
+                  errMessage = 'Input des probabilités de la File' + i + ' n\'est pas corect';
+                  break;
+              }
+              var q = [];
+              var sum = 0;
+              for (var j=0; j<=nbFiles; j++) {
+                  q[j] = parseFloat(p[j])
+                  sum += q[j]
+              }
+              if (sum != 1){
+                  err = 1;
+                  errMessage = 'Le sum des probabilités de la File'+ i + ' n\'est pas équal à 1';
+                  break;
+              } else {
+                  P[i] = q
+              }
+          }
+
+          if (err == 1){
+              alert(errMessage);
+          } else {
+              $.ajax({
+                  type: 'POST',
+                  url: '/systemResult/',
+                  data: {
+                      csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                      lbd: $('#lbd').val(),
+                      nbFiles: $('#nbFiles').val(),
+                      mu: mu,
+                      P: P,
+                  },
+                  dataType: 'json',
+                  success: function (data) {
+                      if (data['err'] == 'non'){
+                          alert(data['rho_str']);
+                      } else{
+                          alert(data['err']);
+                      }
+                  }
+              })
+          }
+
+
+
+      })
+    </script>
+{% endblock %}
