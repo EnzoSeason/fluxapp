@@ -80,14 +80,14 @@ def systemResult(request):
     print(P)
     I = np.eye(nbFiles, nbFiles)
     det = np.linalg.det(I - P)
-    if det < 0:
-        return JsonResponse({'err': 'det < 0'})
+    print(det)
+    if det == 0:
+        return JsonResponse({'err': 'I - P n\'est pas inversible.'})
     else:
         rho = hospital_calculRho(nbFiles, lbd, mu, p0, P)
 
         rho_str = '_'.join(str(e) for e in rho)
         data = {}
         data['rho_str'] = rho_str
-        data['err'] = 'non'
         print(data)
         return JsonResponse(data)

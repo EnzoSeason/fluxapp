@@ -117,10 +117,10 @@
                   },
                   dataType: 'json',
                   success: function (data) {
-                      if (data['err'] == 'non'){
-                          alert(data['rho_str']);
-                      } else{
+                      if (data['err']){
                           alert(data['err']);
+                      } else{
+                          alert(data['rho_str']);
                       }
                   }
               })
