@@ -92,9 +92,12 @@
               for (var j=0; j<=nbFiles; j++) {
                   q[j] = parseFloat(p[j])
                   sum += q[j]
+                  console.log(sum);
               }
+              sum = parseFloat(sum.toPrecision(12))
               if (sum != 1){
                   err = 1;
+                  console.log(sum);
                   errMessage = 'Le sum des probabilités de la File'+ i + ' n\'est pas équal à 1';
                   break;
               } else {
@@ -120,7 +123,7 @@
                       if (data['err']){
                           alert(data['err']);
                       } else{
-                          alert(data['rho_str']);
+                          alert('rho = ' + data['rho_str']);
                       }
                   }
               })
