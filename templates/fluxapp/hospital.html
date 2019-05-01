@@ -1,0 +1,255 @@
+{% extends 'fluxapp/layout.html' %}
+
+{% block scripte_library %}
+    <!-- JQuery UI-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+{% endblock %}
+
+{% block style %}
+    <style>
+        img.sticky {
+            display: none;
+            position: fixed;
+            bottom:30px;
+            right: 0px;
+            width: 50%;
+            height: 50%;
+        }
+    </style>
+{% endblock %}
+
+{% block sticky_img %}
+    <img class="sticky"src="https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-805011992453/resources/static/hospital.png" alt="hospital">
+{% endblock %}
+
+{% block contient %}
+    <h3>Le réseau des files d'attentes dans l'hôpital</h3>
+    <div class="d-flex justify-content-center">
+        <img src="https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-805011992453/resources/static/hospital.png" alt="hospital" height="70%" width="70%">
+    </div>
+    <div class="container">
+        <h4>La construction des files</h4>
+        <div class="container">
+            <p>On va initialiser le taux du service et la table des probabiltés de passage pour chaque file.</p>
+            <p>La table est sous la forme de p_sortir, p_1, p_3, p_4, p_21, p_22, .. , p_2i, ... , p_2n. Le sum est équal à 1.</p>
+        </div>
+        <form id='files_form'>
+            {% csrf_token %}
+            <div class="form-group row">
+                <label for="nbCliniqueFiles" class="col-sm-4 col-form-label">Le nombre des files, nbFiles = </label>
+                <div class="col-sm-8">
+                    <input type="text" readonly class="form-control-plaintext" id="nbFiles" value="{{ nbCliniqueFiles.stop|add:"3" }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="lbd" class="col-sm-4 col-form-label">Le nombre des patients arrivées, λ = </label>
+                <div class="col-sm-8">
+                    <input type="text" readonly class="form-control-plaintext" id="lbd" value="{{ lbd }}">
+                </div>
+            </div>
+            <h5>Les probabilités d'entrer</h5>
+            <p>Un client peut entrer dans 2 files. Soit la file d'admin, soit la file d'urgence.</p>
+            <p>Les probabilité: </p>
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" id="p_0_0" value="0" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" id="p_0_1" value="0.7" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" id="p_0_2" value="0.3" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_0_3" value="0" required>
+                </div>
+                {% for i in nbCliniqueFiles %}
+                    <div class="col-sm-1">
+                        <input type="text" readonly class="form-control" id="p_0_{{ i|add:"4" }}" value="0" required>
+                    </div>
+                {% endfor %}
+            </div>
+            <h5>La file 1: Admin</h5>
+            <div class="form-group row">
+                <label for="mu_1" class="col-sm-2 col-form-label" >µ1 = </label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="mu_1" style="width: 10%" required>
+                </div>
+            </div>
+            <p>Les probabilité:</p>
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_1_0" value="0" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_1_1" value="0" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_1_2" value="0" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_1_3" value="0" required>
+                </div>
+                {% for i in nbCliniqueFiles %}
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" id="p_1_{{ i|add:"4" }}" required>
+                    </div>
+                {% endfor %}
+            </div>
+            <h5>La file 3: Urgence</h5>
+            <div class="form-group row">
+                <label for="mu_2" class="col-sm-2 col-form-label" >µ3 = </label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="mu_2" style="width: 10%" required>
+                </div>
+            </div>
+            <p>Les probabilité:</p>
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" id="p_2_0" value="0.2" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_2_1" value="0" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_2_2" value="0" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" id="p_2_3" value="0.8" required>
+                </div>
+                {% for i in nbCliniqueFiles %}
+                    <div class="col-sm-1">
+                        <input type="text" readonly class="form-control" id="p_2_{{ i|add:"4" }}" value="0">
+                    </div>
+                {% endfor %}
+            </div>
+            <h5>La file 4: Traitement</h5>
+            <div class="form-group row">
+                <label for="mu_3" class="col-sm-2 col-form-label" >µ4 = </label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="mu_3" style="width: 10%" required>
+                </div>
+            </div>
+            <p>Les probabilité:</p>
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" id="p_3_0" value="0.6" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" id="p_3_1" value="0.4" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_3_2" value="0" required>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" readonly class="form-control" id="p_3_3" value="0" required>
+                </div>
+                {% for i in nbCliniqueFiles %}
+                    <div class="col-sm-1">
+                        <input type="text" readonly class="form-control" id="p_3_{{ i|add:"4" }}" value="0">
+                    </div>
+                {% endfor %}
+            </div>
+            {% for i in nbCliniqueFiles %}
+                <h5>La file 2: numéro {{ i|add:"1" }}</h5>
+                <div class="form-group row">
+                    <label for="mu_{{ i|add:"4" }}" class="col-sm-2 col-form-label" >µ2_{{ i|add:"1" }} = </label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="mu_{{ i|add:"4" }}" style="width: 10%" required>
+                    </div>
+                </div>
+                <p>Les probabilité:</p>
+                <div class="form-group row">
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" id="p_{{ i|add:"4" }}_0" value="0.3" required>
+                    </div>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" id="p_{{ i|add:"4" }}_1" value="0.3" required>
+                    </div>
+                    <div class="col-sm-1">
+                        <input type="text" readonly class="form-control" id="p_{{ i|add:"4" }}_2" value="0" required>
+                    </div>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" id="p_{{ i|add:"4" }}_3" value="0.4" required>
+                    </div>
+                    {% for j in nbCliniqueFiles %}
+                        <div class="col-sm-1">
+                            <input type="text" readonly class="form-control" id="p_{{ i|add:"4" }}_{{ j|add:"4" }}" value="0" required>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary mb-2">Confirmer</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+    $(document).scroll(function() {
+      var y = $(this).scrollTop();
+      if (y > 400 ) {
+        $('img.sticky').fadeIn();
+      } else {
+        $('img.sticky').fadeOut();
+      }
+    });
+
+    //ajax post
+    $(document).on('submit','#files_form', function (e) {
+        e.preventDefault();
+
+        var err = 0;
+        var errMessage = '';
+        var nbFiles = parseInt($('#nbFiles').val());
+        var mu = [];
+        for (var i=1; i <= nbFiles; i++){
+            mu[i] = parseFloat($('#mu_'+i).val());
+        }
+        var P = [];
+        for(var i=0; i<= nbFiles; i++){
+            var q = [];
+            var sum = 0;
+            for(var j=0; j<=nbFiles; j++){
+                q[j] = parseFloat($('#p_'+i+'_'+j).val());
+                sum += q[j];
+            }
+            sum = parseFloat(sum.toPrecision(12));
+            if (sum != 1){
+                err = 1;
+                console.log(sum);
+                errMessage = 'Le sum des probabilités de la File avec numéro'+ i + ' n\'est pas équal à 1';
+                break;
+            } else {
+                P[i] = q
+            }
+        }
+
+        if (err == 1){
+            alert(errMessage);
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/systemResult/',
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    lbd: $('#lbd').val(),
+                    nbFiles: $('#nbFiles').val(),
+                    mu: mu,
+                    P: P,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data['err']){
+                        alert(data['err']);
+                    } else{
+                        alert('rho = ' + data['rho_str']);
+                    }
+                }
+            });
+          }
+    });
+    </script>
+{% endblock %}

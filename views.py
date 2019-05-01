@@ -8,8 +8,6 @@ from django.http import JsonResponse
 def index(request):
     return render(request, 'fluxapp/index.html')
 
-
-
 def ex1(request):
     pai = 0.0
     rho1 = 0.0
@@ -91,3 +89,20 @@ def systemResult(request):
         data['rho_str'] = rho_str
         print(data)
         return JsonResponse(data)
+
+def hospital(request, lbd=0, nbCliniqueFiles=0):
+    return render(request, 'fluxapp/hospital.html', {'lbd': lbd, 'nbCliniqueFiles': range(int(nbCliniqueFiles))})
+
+def initHosiptal(request):
+    if request.method == 'POST':
+        form = fileForm(request.POST)
+        if form.is_valid():
+            lbd = form.cleaned_data['lbd']
+            nbFiles = form.cleaned_data['nbFiles']
+            return redirect(reverse('hospital', kwargs={'lbd': lbd, 'nbCliniqueFiles': nbFiles}))
+        else:
+            form = fileForm()
+    else:
+        form = fileForm()
+
+    return render(request, 'fluxapp/initHospital.html', {'form': form})

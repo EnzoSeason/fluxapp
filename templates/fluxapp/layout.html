@@ -38,11 +38,15 @@
 
 
     </style>
+    {% block style %}
+    {% endblock %}
     {% block scripte_library %}
     {% endblock %}
 </head>
 <body>
     <!-- Page Content -->
+    {% block sticky_img %}
+    {% endblock %}
     <div id="content" class="w-100">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid shadow-sm p-3 mb-3 bg-white rounded">
@@ -60,7 +64,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                           <a class="dropdown-item" href="http://django-app-dev2.us-west-2.elasticbeanstalk.com/fluxapp/ex1/">Modèle simple: 3 files d'attents</a>
-                          <a class="dropdown-item" href="https://s3-us-west-2.amazonaws.com/elasticbeanstalk-us-west-2-805011992453/resources/static/rapport_flux_patients.html">Modèle du Hôpital</a>
+                          <a class="dropdown-item" href="">Modèle du Hôpital</a>
                           <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="http://django-app-dev2.us-west-2.elasticbeanstalk.com/fluxapp/createFiles1">Créer un nouveau modèle</a>
                         </div>
