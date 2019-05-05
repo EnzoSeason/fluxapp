@@ -135,10 +135,10 @@
             <p>Les probabilité:</p>
             <div class="form-group row">
                 <div class="col-sm-1">
-                    <input type="text" class="form-control" id="p_3_0" value="0.6" required>
+                    <input type="text" readonly class="form-control" id="p_3_0" value="1" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" class="form-control" id="p_3_1" value="0.4" required>
+                    <input type="text" readonly class="form-control" id="p_3_1" value="0" required>
                 </div>
                 <div class="col-sm-1">
                     <input type="text" readonly class="form-control" id="p_3_2" value="0" required>
@@ -184,6 +184,11 @@
             <button type="submit" class="btn btn-primary mb-2">Confirmer</button>
         </form>
     </div>
+    <div id="result" class="container"></div>
+    <div id="N_str" class="container"></div>
+    <div id="T_str" class="container"></div>
+    <div id="W_str" class="container"></div>
+    <div id="mu_best_str" class="container"></div>
 {% endblock %}
 
 {% block javascript %}
@@ -245,7 +250,11 @@
                     if (data['err']){
                         alert(data['err']);
                     } else{
-                        alert('rho = ' + data['rho_str']);
+                        $('#result').html('<h4>Résultats</h4>');
+                        $('#N_str').html('<h5>Le nombre moyen des patients dans chaque file</h5><p>'+data['N_str']+'</p>');
+                        $('#T_str').html('<h5>Le temps de séjour moyen dans chaque file</h5><p>'+data['T_str']+'</p>');
+                        $('#W_str').html('<h5>Le temps d\'attente dans chaque file</h5><p>'+data['W_str']+'</p>');
+                        $('#mu_best_str').html('<h5>Les meilleurs µ</h5><p>'+data['mu_best_str']+'</p>');
                     }
                 }
             });

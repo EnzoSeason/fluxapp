@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from fluxapp.forms import Ex1Form, fileForm
-from fluxapp.mathFunctions import ex1_calculPai, hospital_calculRho
+from fluxapp.mathFunctions import ex1_calculPai, hospital_calculRho, calcul_MeanNumInNode, calcul_MeanWaitTimeInNode, calcul_MeanSojornTimeInNode, best_mu
 import numpy as np
 from django.http import JsonResponse
 
@@ -82,11 +82,35 @@ def systemResult(request):
     if det == 0:
         return JsonResponse({'err': 'I - P n\'est pas inversible.'})
     else:
-        rho = hospital_calculRho(nbFiles, lbd, mu, p0, P)
+        rho, e = hospital_calculRho(nbFiles, lbd, mu, p0, P)
+        N = calcul_MeanNumInNode(rho)
+        print(N)
+        T = calcul_MeanSojornTimeInNode(N,lbd, e)
+        print(T)
+        W = calcul_MeanWaitTimeInNode(T, mu)
+        print(W)
+        C = np.sum(mu)
+        mu_best = best_mu(lbd, e, C)
+        print(mu_best)
 
+        mu_str = '_'.join(str(e) for e in mu)
+        e_str  = '_'.join(str(ele) for ele in e)
         rho_str = '_'.join(str(e) for e in rho)
+        N_str = '_'.join(str(e) for e in N)
+        T_str = '_'.join(str(e) for e in T)
+        W_str = '_'.join(str(e) for e in W)
+        mu_best_str = '_'.join(str(e) for e in mu_best)
+
         data = {}
+        data['lbd'] = lbd
+        data['mu_str'] = mu_str
+        data['e_str'] = e_str
         data['rho_str'] = rho_str
+        data['N_str'] = N_str
+        data['T_str'] = T_str
+        data['W_str'] = W_str
+        data['mu_best_str'] = mu_best_str
+
         print(data)
         return JsonResponse(data)
 
@@ -104,5 +128,4 @@ def initHosiptal(request):
             form = fileForm()
     else:
         form = fileForm()
-
     return render(request, 'fluxapp/initHospital.html', {'form': form})

@@ -10,5 +10,5 @@ urlpatterns = [
     path('systemResult/', views.systemResult),
     path('hospital/', views.hospital),
     path('hospital/<lbd>/<nbCliniqueFiles>', views.hospital, name='hospital'),
-    path('initHospital/', views.initHosiptal)
+    path('initHospital/', views.initHosiptal),
 ]
