@@ -94,7 +94,7 @@ def systemResult(request):
         print(mu_best)
 
         mu_str = '_'.join(str(e) for e in mu)
-        e_str  = '_'.join(str(ele) for ele in e)
+        e_str = '_'.join(str(ele) for ele in e)
         rho_str = '_'.join(str(e) for e in rho)
         N_str = '_'.join(str(e) for e in N)
         T_str = '_'.join(str(e) for e in T)

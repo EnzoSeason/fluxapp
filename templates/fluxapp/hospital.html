@@ -12,7 +12,7 @@
         img.sticky {
             display: none;
             position: fixed;
-            bottom:30px;
+            bottom:350px;
             right: 0px;
             width: 50%;
             height: 50%;
@@ -33,7 +33,7 @@
         <h4>La construction des files</h4>
         <div class="container">
             <p>On va initialiser le taux du service et la table des probabiltés de passage pour chaque file.</p>
-            <p>La table est sous la forme de p_sortir, p_1, p_3, p_4, p_21, p_22, .. , p_2i, ... , p_2n. Le sum est équal à 1.</p>
+            <p>La table est sous la forme de p_sortir, p_1, p_3, p_4, p_21, p_22, .. , p_2i, ... , p_2n. La sum est équal à 1. Cliquez sur le boutton "Vérifier" pour vérifier la sum.</p>
         </div>
         <form id='files_form'>
             {% csrf_token %}
@@ -54,153 +54,262 @@
             <p>Les probabilité: </p>
             <div class="form-group row">
                 <div class="col-sm-1">
-                    <input type="text" class="form-control" id="p_0_0" value="0" required>
+                    <label for="p_0_0">p00</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_0_0" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" class="form-control" id="p_0_1" value="0.7" required>
+                    <label for="p_0_1">p01</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_0_1" value="0.7" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" class="form-control" id="p_0_2" value="0.3" required>
+                    <label for="p_0_2">p03</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_0_2" value="0.3" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_0_3" value="0" required>
+                    <label for="p_0_3">p04</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_0_3" value="0" required>
                 </div>
                 {% for i in nbCliniqueFiles %}
                     <div class="col-sm-1">
-                        <input type="text" readonly class="form-control" id="p_0_{{ i|add:"4" }}" value="0" required>
+                        <label for="p_0_{{ i|add:"4" }}">p0(2_{{i|add:"1"}})</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_0_{{ i|add:"4" }}" value="0" required>
                     </div>
                 {% endfor %}
+                <div id="p_0" class="btn btn-light mb-1" onclick="sum_listener(this)" style="margin-top:30px">Vérifier</div>
+                <div class="col-sm-4" id="check_0"></div>
             </div>
             <h5>La file 1: Admin</h5>
             <div class="form-group row">
                 <label for="mu_1" class="col-sm-2 col-form-label" >µ1 = </label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="mu_1" style="width: 10%" required>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="mu_1" style="width: 10%" required>
                 </div>
             </div>
             <p>Les probabilité:</p>
             <div class="form-group row">
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_1_0" value="0" required>
+                    <label for="p_1_0">p10</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_1_0" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_1_1" value="0" required>
+                    <label for="p_1_1">p11</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_1_1" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_1_2" value="0" required>
+                    <label for="p_1_2">p13</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_1_2" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_1_3" value="0" required>
+                    <label for="p_1_3">p14</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_1_3" value="0" required>
                 </div>
                 {% for i in nbCliniqueFiles %}
                     <div class="col-sm-1">
-                        <input type="text" class="form-control" id="p_1_{{ i|add:"4" }}" required>
+                        <label for="p_1_{{ i|add:"4" }}">p1(2_{{ i|add:"1" }})</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_1_{{ i|add:"4" }}" required>
                     </div>
                 {% endfor %}
+                <div id="p_1" class="btn btn-light mb-1" onclick="sum_listener(this)" style="margin-top:30px">Vérifier</div>
+                <div class="col-sm-4" id="check_1"></div>
             </div>
             <h5>La file 3: Urgence</h5>
             <div class="form-group row">
                 <label for="mu_2" class="col-sm-2 col-form-label" >µ3 = </label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="mu_2" style="width: 10%" required>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="mu_2" style="width: 10%" required>
                 </div>
             </div>
             <p>Les probabilité:</p>
             <div class="form-group row">
                 <div class="col-sm-1">
-                    <input type="text" class="form-control" id="p_2_0" value="0.2" required>
+                    <label for="p_2_0">p30</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_2_0" value="0.2" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_2_1" value="0" required>
+                    <label for="p_2_1">p31</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_2_1" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_2_2" value="0" required>
+                    <label for="p_2_2">p33</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_2_2" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" class="form-control" id="p_2_3" value="0.8" required>
+                    <label for="p_2_2">p34</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_2_3" value="0.8" required>
                 </div>
                 {% for i in nbCliniqueFiles %}
                     <div class="col-sm-1">
-                        <input type="text" readonly class="form-control" id="p_2_{{ i|add:"4" }}" value="0">
+                        <label for="p_2_{{ i|add:"4" }}">p3(2_{{ i|add:"1" }})</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_2_{{ i|add:"4" }}" value="0">
                     </div>
                 {% endfor %}
+                <div id="p_2" class="btn btn-light mb-1" onclick="sum_listener(this)" style="margin-top:30px">Vérifier</div>
+                <div class="col-sm-4" id="check_2"></div>
             </div>
             <h5>La file 4: Traitement</h5>
             <div class="form-group row">
                 <label for="mu_3" class="col-sm-2 col-form-label" >µ4 = </label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="mu_3" style="width: 10%" required>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="mu_3" style="width: 10%" required>
                 </div>
             </div>
             <p>Les probabilité:</p>
             <div class="form-group row">
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_3_0" value="1" required>
+                    <label for="p_3_0">p40</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_3_0" value="1" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_3_1" value="0" required>
+                    <label for="p_3_1">p41</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_3_1" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_3_2" value="0" required>
+                    <label for="p_3_2">p43</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_3_2" value="0" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="text" readonly class="form-control" id="p_3_3" value="0" required>
+                    <label for="p_3_3">p44</label>
+                    <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_3_3" value="0" required>
                 </div>
                 {% for i in nbCliniqueFiles %}
                     <div class="col-sm-1">
-                        <input type="text" readonly class="form-control" id="p_3_{{ i|add:"4" }}" value="0">
+                        <label for="p_3_{{ i|add:"4" }}">p4(2_{{ i|add:"1" }})</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_3_{{ i|add:"4" }}" value="0">
                     </div>
                 {% endfor %}
+                <div id="p_3" class="btn btn-light mb-1" onclick="sum_listener(this)" style="margin-top:30px">Vérifier</div>
+                <div class="col-sm-4" id="check_3"></div>
             </div>
             {% for i in nbCliniqueFiles %}
                 <h5>La file 2: numéro {{ i|add:"1" }}</h5>
                 <div class="form-group row">
                     <label for="mu_{{ i|add:"4" }}" class="col-sm-2 col-form-label" >µ2_{{ i|add:"1" }} = </label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="mu_{{ i|add:"4" }}" style="width: 10%" required>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="mu_{{ i|add:"4" }}" style="width: 10%" required>
                     </div>
                 </div>
                 <p>Les probabilité:</p>
                 <div class="form-group row">
                     <div class="col-sm-1">
-                        <input type="text" class="form-control" id="p_{{ i|add:"4" }}_0" value="0.3" required>
+                        <label for="p_{{ i|add:"4" }}_0">p(2_{{ i|add:"1" }})0</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_{{ i|add:"4" }}_0" value="0.3" required>
                     </div>
                     <div class="col-sm-1">
-                        <input type="text" class="form-control" id="p_{{ i|add:"4" }}_1" value="0.3" required>
+                        <label for="p_{{ i|add:"4" }}_1">p(2_{{ i|add:"1" }})1</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_{{ i|add:"4" }}_1" value="0.3" required>
                     </div>
                     <div class="col-sm-1">
-                        <input type="text" readonly class="form-control" id="p_{{ i|add:"4" }}_2" value="0" required>
+                        <label for="p_{{ i|add:"4" }}_2">p(2_{{ i|add:"1" }})3</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_{{ i|add:"4" }}_2" value="0" required>
                     </div>
                     <div class="col-sm-1">
-                        <input type="text" class="form-control" id="p_{{ i|add:"4" }}_3" value="0.4" required>
+                        <label for="p_{{ i|add:"4" }}_3">p(2_{{ i|add:"1" }})4</label>
+                        <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  class="form-control" id="p_{{ i|add:"4" }}_3" value="0.4" required>
                     </div>
                     {% for j in nbCliniqueFiles %}
                         <div class="col-sm-1">
-                            <input type="text" readonly class="form-control" id="p_{{ i|add:"4" }}_{{ j|add:"4" }}" value="0" required>
+                            <label for="p_{{ i|add:"4" }}_{{ j|add:"4" }}">p(2_{{ i|add:"1" }}){{ j|add:"4" }}</label>
+                            <input type="text" onchange="this.value = this.value.replace(/,/g, '.')"  readonly class="form-control" id="p_{{ i|add:"4" }}_{{ j|add:"4" }}" value="0" required>
                         </div>
                     {% endfor %}
+                    <div id="p_{{ i|add:"4" }}" class="btn btn-light mb-1" onclick="sum_listener(this)" style="margin-top:30px">Vérifier</div>
+                    <div class="col-sm-4" id="check_{{ i|add:"4" }}"></div>
                 </div>
             {% endfor %}
             <button type="submit" class="btn btn-primary mb-2">Confirmer</button>
         </form>
     </div>
-    <div id="result" class="container"></div>
-    <div id="N_str" class="container"></div>
-    <div id="T_str" class="container"></div>
-    <div id="W_str" class="container"></div>
-    <div id="mu_best_str" class="container"></div>
+    <div id="result_logo" class="container">
+        <h4>Résultats</h4>
+        <ul>
+            <li>N: Le nombre moyen des patients dans chaque file</li>
+            <li>T: Le temps de séjour moyen dans chaque file</li>
+            <li>W: Le temps d'attente dans chaque file</li>
+            <li>mu_best: Les meilleurs µ. <br />
+                <p>Nous supposons que la sum de µ n'est pas changé. On trouve les meuilleurs µ pour minimiser le temps de séjour dans le réseau d'hôpital.<p>
+            </li>
+        </ul>
+    </div>
+    <table id="result" class="table table-striped">
+        <thead>
+            <th scope="col">#</th>
+            <th scope="col">File 1</th>
+            <th scope="col">File 3</th>
+            <th scope="col">File 4</th>
+            {% for i in nbCliniqueFiles %}
+                <th scope="col">File 2_{{ i|add:"1" }}</th>
+            {% endfor %}
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">N</th>
+                <td id="N_0"></td>
+                <td id="N_1"></td>
+                <td id="N_2"></td>
+                {% for i in nbCliniqueFiles %}
+                    <td id="N_{{ i|add:"3" }}"></td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">T</th>
+                <td id="T_0"></td>
+                <td id="T_1"></td>
+                <td id="T_2"></td>
+                {% for i in nbCliniqueFiles %}
+                    <td id="T_{{ i|add:"3" }}"></td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">W</th>
+                <td id="W_0"></td>
+                <td id="W_1"></td>
+                <td id="W_2"></td>
+                {% for i in nbCliniqueFiles %}
+                    <td id="W_{{ i|add:"3" }}"></td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">mu_best</th>
+                <td id="mu_best_0"></td>
+                <td id="mu_best_1"></td>
+                <td id="mu_best_2"></td>
+                {% for i in nbCliniqueFiles %}
+                    <td id="mu_best_{{ i|add:"3" }}"></td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}
 
 {% block javascript %}
     <script>
     $(document).scroll(function() {
       var y = $(this).scrollTop();
-      if (y > 400 ) {
+      if (y > 600 ) {
         $('img.sticky').fadeIn();
       } else {
         $('img.sticky').fadeOut();
       }
     });
+
+    var nb_files = {{ nbCliniqueFiles.stop }} + 3;
+
+    function sum_listener(e) {
+        console.log(e.id);
+        var line = e.id.split('_')[1];
+        var p = [];
+        var sum = 0;
+        for(var j=0; j<=nb_files; j++){
+            p[j] = parseFloat($('#p_'+line+'_'+j).val());
+            sum += p[j];
+        }
+        sum = parseFloat(sum.toPrecision(12));
+        if(sum == 1){
+            $('#check_'+line).html('<div style="color: green; margin-top:36px">OK</div>');
+        } else{
+            $('#check_'+line).html('<div style="color: red; margin-top:36px">la sum n\'est pas 1</div>');
+        }
+    }
 
     //ajax post
     $(document).on('submit','#files_form', function (e) {
@@ -250,11 +359,16 @@
                     if (data['err']){
                         alert(data['err']);
                     } else{
-                        $('#result').html('<h4>Résultats</h4>');
-                        $('#N_str').html('<h5>Le nombre moyen des patients dans chaque file</h5><p>'+data['N_str']+'</p>');
-                        $('#T_str').html('<h5>Le temps de séjour moyen dans chaque file</h5><p>'+data['T_str']+'</p>');
-                        $('#W_str').html('<h5>Le temps d\'attente dans chaque file</h5><p>'+data['W_str']+'</p>');
-                        $('#mu_best_str').html('<h5>Les meilleurs µ</h5><p>'+data['mu_best_str']+'</p>');
+                        var N = data['N_str'].split("_");
+                        var T = data['T_str'].split("_");
+                        var W = data['W_str'].split("_");
+                        var mu_best = data['mu_best_str'].split("_");
+                        for(var i=0; i< N.length; i++){
+                            $('#N_'+i).html(N[i]);
+                            $('#T_'+i).html(T[i]);
+                            $('#W_'+i).html(W[i]);
+                            $('#mu_best_'+i).html(mu_best[i]);
+                        }
                     }
                 }
             });
