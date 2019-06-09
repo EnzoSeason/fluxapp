@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from fluxapp.forms import Ex1Form, fileForm
-from fluxapp.mathFunctions import ex1_calculPai, hospital_calculRho, calcul_MeanNumInNode, calcul_MeanWaitTimeInNode, calcul_MeanSojornTimeInNode, best_mu
+from fluxapp.mathFunctions import ex1_calculPai, hospital_calculRho, calcul_MeanNumInNode, calcul_MeanWaitTimeInNode, calcul_MeanSojornTimeInNode, best_mu, differanceOriginalOptimal
 import numpy as np
 from django.http import JsonResponse
 
@@ -70,7 +70,7 @@ def systemResult(request):
         line = 'P['+str(i)+'][]'
         q = np.array(request.POST.getlist(line))
         P = np.vstack((P, q))
-    print(P)
+    #print(P)
 
     p0 = P[0, 1:nbFiles+1].astype(float)
     print(p0)
@@ -83,15 +83,17 @@ def systemResult(request):
         return JsonResponse({'err': 'I - P n\'est pas inversible.'})
     else:
         rho, e = hospital_calculRho(nbFiles, lbd, mu, p0, P)
+        print(e)
         N = calcul_MeanNumInNode(rho)
         print(N)
-        T = calcul_MeanSojornTimeInNode(N,lbd, e)
+        T = calcul_MeanSojornTimeInNode(lbd, mu, e)
         print(T)
         W = calcul_MeanWaitTimeInNode(T, mu)
         print(W)
         C = np.sum(mu)
         mu_best = best_mu(lbd, e, C)
         print(mu_best)
+        dT, dW = differanceOriginalOptimal(lbd,e,mu,mu_best)
 
         mu_str = '_'.join(str(e) for e in mu)
         e_str = '_'.join(str(ele) for ele in e)
@@ -100,6 +102,8 @@ def systemResult(request):
         T_str = '_'.join(str(e) for e in T)
         W_str = '_'.join(str(e) for e in W)
         mu_best_str = '_'.join(str(e) for e in mu_best)
+        dT_str = '_'.join(str(e) for e in dT)
+        dW_str = '_'.join(str(e) for e in dW)
 
         data = {}
         data['lbd'] = lbd
@@ -110,6 +114,8 @@ def systemResult(request):
         data['T_str'] = T_str
         data['W_str'] = W_str
         data['mu_best_str'] = mu_best_str
+        data['dT_str'] = dT_str
+        data['dW_str'] = dW_str
 
         print(data)
         return JsonResponse(data)
